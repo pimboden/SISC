@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sisc.RestApi.Services;
 
 namespace Sisc.RestApi
 {
@@ -19,6 +20,7 @@ namespace Sisc.RestApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSingleton<IMockCreator, MockCreator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,7 +36,8 @@ namespace Sisc.RestApi
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes=> routes.MapRoute("api", "api/{controller}/{action}/{id?}")).UseMvcWithDefaultRoute();
+
         }
     }
 }

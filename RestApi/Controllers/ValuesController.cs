@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Newtonsoft.Json.Serialization;
 using Sisc.RestApi.Models;
+using Sisc.RestApi.Services;
 
 namespace Sisc.RestApi.Controllers
 {
@@ -10,46 +14,85 @@ namespace Sisc.RestApi.Controllers
     public class ValuesController : ControllerBase
     {
         
-        private List<Value> AllValues;
-        public ValuesController()
+        private readonly List<Value> AllValues;
+        public ValuesController(IMockCreator  mockCreator)
         {
-            AllValues = new List<Value>();
-            for (var i = 0; i < 100; i++)
-            {
-                AllValues.Add(new Value { Id = i , Name = $"Name {i}"});
-            }
+            AllValues = mockCreator.AllValues;
 
         }
-        // GET api/values
+        // GET api/values/GetAll
         [HttpGet]
-        public ActionResult<List<Value>> Get()
+        [Route("GetAll")]
+        public ActionResult<List<Value>> GetAll()
         {
             return AllValues;
         }
+        // GET api/values/GetSome?amount=3
+        [HttpGet]
+        [Route("GetSome")]
+        public ActionResult<List<Value>> GetSome([FromQuery] int amount)
+        {
+            return AllValues.GetRange(0, amount);
+        }
 
-        // GET api/values/5
+        // GET api/values/Get/5
         [HttpGet("{id}")]
+        [Route("Get/{id}")]
         public ActionResult<Value> Get(int id)
         {
             return AllValues.FirstOrDefault(x=>x.Id == id);
         }
 
-        // POST api/values
+        // POST api/values/add
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("Add")]
+        public ActionResult Add([FromBody] Value newValue)
         {
+            try
+            {
+                var newId = 1;
+                if (AllValues.Count > 0)
+                {
+                    newId = AllValues.Max(x => x.Id);
+                }
+                newValue.Id = newId+1;
+                AllValues.Add(newValue);
+                
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/values/Update
+        [HttpPut]
+        [Route("Update")]
+        public ActionResult Update( [FromBody] Value updateValue)
         {
+            var found = AllValues.FirstOrDefault(x => x.Id == updateValue.Id);
+            if (found != null)
+            {
+                found.Name = updateValue.Name;
+                return Ok();
+            }
+            return NotFound();
         }
 
-        // DELETE api/values/5
+        // DELETE api/values/Delete/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [Route("Delete")]
+        public ActionResult Delete(int id)
         {
+            var found = AllValues.FirstOrDefault(x => x.Id == id);
+            if (found != null)
+            {
+                AllValues.RemoveAt(AllValues.IndexOf(found));
+                return Ok();
+            }
+            return NotFound();
         }
+
     }
 }
