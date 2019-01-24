@@ -1,27 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Sisc.RestApi.Models;
 
-namespace RestApi.Controllers
+namespace Sisc.RestApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        
+        private List<Value> AllValues;
+        public ValuesController()
+        {
+            AllValues = new List<Value>();
+            for (var i = 0; i < 100; i++)
+            {
+                AllValues.Add(new Value { Id = i , Name = $"Name {i}"});
+            }
+
+        }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<List<Value>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return AllValues;
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public ActionResult<Value> Get(int id)
         {
-            return "value";
+            return AllValues.FirstOrDefault(x=>x.Id == id);
         }
 
         // POST api/values
