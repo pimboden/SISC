@@ -21,6 +21,7 @@ namespace Sisc.RestApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IMockCreator, MockCreator>();
+            services.AddApiVersioning();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,7 +37,7 @@ namespace Sisc.RestApi
             }
 
             app.UseHttpsRedirection();
-            app.UseMvc(routes=> routes.MapRoute("api", "api/{controller}/{action}/{id?}")).UseMvcWithDefaultRoute();
+            app.UseMvc();
 
         }
     }

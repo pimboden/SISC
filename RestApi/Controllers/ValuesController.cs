@@ -9,7 +9,8 @@ using Sisc.RestApi.Services;
 
 namespace Sisc.RestApi.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]/[action]/{id?}")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
@@ -22,22 +23,19 @@ namespace Sisc.RestApi.Controllers
         }
         // GET api/values/GetAll
         [HttpGet]
-        [Route("GetAll")]
         public ActionResult<List<Value>> GetAll()
         {
             return AllValues;
         }
         // GET api/values/GetSome?amount=3
         [HttpGet]
-        [Route("GetSome")]
         public ActionResult<List<Value>> GetSome([FromQuery] int amount)
         {
             return AllValues.GetRange(0, amount);
         }
 
         // GET api/values/Get/5
-        [HttpGet("{id}")]
-        [Route("Get/{id}")]
+        [HttpGet()]
         public ActionResult<Value> Get(int id)
         {
             return AllValues.FirstOrDefault(x=>x.Id == id);
@@ -45,7 +43,6 @@ namespace Sisc.RestApi.Controllers
 
         // POST api/values/add
         [HttpPost]
-        [Route("Add")]
         public ActionResult Add([FromBody] Value newValue)
         {
             try
@@ -68,7 +65,6 @@ namespace Sisc.RestApi.Controllers
 
         // PUT api/values/Update
         [HttpPut]
-        [Route("Update")]
         public ActionResult Update( [FromBody] Value updateValue)
         {
             var found = AllValues.FirstOrDefault(x => x.Id == updateValue.Id);
@@ -81,8 +77,7 @@ namespace Sisc.RestApi.Controllers
         }
 
         // DELETE api/values/Delete/5
-        [HttpDelete("{id}")]
-        [Route("Delete")]
+        [HttpDelete]
         public ActionResult Delete(int id)
         {
             var found = AllValues.FirstOrDefault(x => x.Id == id);
