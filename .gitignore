@@ -1,4 +1,6 @@
 .vs/
-RestApi/obj/
-RestApi/bin/
+.vscode/
+**/obj/
+**/bin/
 SISC.sln.DotSettings.user
+bobo.cs
