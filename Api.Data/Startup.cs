@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Sisc.Api.Data.Common;
@@ -8,7 +6,7 @@ using Sisc.Api.Data.Repositories;
 
 namespace Sisc.Api.Data
 {
-    public class Startup
+    public class StartUp
     {
         public void ConfigureServices(IServiceCollection services, List<string> sqlConnectionStrings)
         {
@@ -19,8 +17,6 @@ namespace Sisc.Api.Data
                 )
             );
             services.AddTransient<IAirlineRepository, AirlineRepository>();
-
-            //            services.AddTransient<ICountriesRepository, CountriesRepository>();
         }
     }
 }

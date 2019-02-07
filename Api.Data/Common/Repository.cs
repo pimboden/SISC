@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Sisc.Api.Data.Common
 {
@@ -22,32 +24,49 @@ namespace Sisc.Api.Data.Common
         {
             return _context.Set<TEntity>().Find(keys);
         }
+        public async Task<TEntity> GetAsync(object[] keys, CancellationToken cancellationToken)
+        {
+            return await _context.Set<TEntity>().FindAsync(keys,cancellationToken);
+        }
 
-        public List<TEntity> GetAll(int pageIndex = 0, int pageSize = 50)
+        public List<TEntity> GetAll(int pageIndex, int pageSize)
         {
             return _context.Set<TEntity>().Skip(pageIndex * pageSize).Take(pageSize).ToList();
         }
 
-        public List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex = 0,
-            int pageSize = 50)
+        public async Task<List<TEntity>> GetAllAsync( int pageIndex, int pageSize, CancellationToken cancellationToken)
+        {
+            return await _context.Set<TEntity>().Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
+        }
+
+        public List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize)
         {
             return _context.Set<TEntity>().Where(predicate).Skip(pageIndex * pageSize).Take(pageSize).ToList();
         }
 
-        public Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, int pageIndex = 0,
-            int pageSize = 50)
+        public async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize, CancellationToken cancellationToken)
         {
-            return _context.Set<TEntity>().Where(predicate).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync();
+            return await _context.Set<TEntity>().Where(predicate).Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
         }
 
-        public void Add(TEntity entity)
+        public EntityEntry<TEntity> Add(TEntity entity)
         {
-            _context.Set<TEntity>().Add(entity);
+            return _context.Set<TEntity>().Add(entity);
+        }
+
+        public async Task<EntityEntry<TEntity>> AddAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            return await _context.Set<TEntity>().AddAsync(entity, cancellationToken);
         }
 
         public void AddRange(List<TEntity> entities)
         {
             _context.Set<TEntity>().AddRange(entities);
+        }
+
+        public async Task AddRangeAsync(List<TEntity> entities, CancellationToken cancellationToken)
+        {
+            await _context.Set<TEntity>().AddRangeAsync(entities, cancellationToken);
         }
 
         public void Remove(TEntity entity)
@@ -73,6 +92,11 @@ namespace Sisc.Api.Data.Common
         public int Complete()
         {
             return _context.SaveChanges();
+        }
+
+        public async Task<int> CompleteAsync(CancellationToken cancellationToken)
+        {
+            return await _context.SaveChangesAsync( cancellationToken);
         }
 
         public void Dispose()

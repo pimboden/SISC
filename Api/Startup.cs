@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sisc.Api.Common.Runtime.Caching;
 using Sisc.RestApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -31,6 +32,7 @@ namespace Sisc.RestApi
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IMockCreator, MockCreator>();
+            services.AddSingleton<ICacheHandler, CacheHandler>();
             services.AddApiVersioning();
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

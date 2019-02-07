@@ -1,18 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Newtonsoft.Json.Serialization;
 using Sisc.RestApi.Models;
 using Sisc.RestApi.Services;
 
-namespace Sisc.RestApi.Controllers
+namespace Sisc.Api.Controllers
 {
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]/")]
-    [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : SiscBaseController
     {
         
         private readonly List<Value> AllValues;

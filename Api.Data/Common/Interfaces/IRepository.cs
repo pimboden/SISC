@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Sisc.Api.Data.Common
 {
@@ -9,15 +11,23 @@ namespace Sisc.Api.Data.Common
     {
         TEntity Get(object[] keys);
 
-        List<TEntity> GetAll(int pageIndex = 0, int pageSize = 50);
+        Task<TEntity> GetAsync(object[] keys, CancellationToken cancellationToken);
 
-        List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex = 0, int pageSize = 50);
+        List<TEntity> GetAll(int pageIndex, int pageSize);
 
-        Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, int pageIndex = 0, int pageSize = 50);
+        Task<List<TEntity>> GetAllAsync(int pageIndex, int pageSize, CancellationToken cancellationToken);
 
-        void Add(TEntity entity);
+        List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize);
+
+        Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize, CancellationToken cancellationToken);
+
+        EntityEntry<TEntity> Add(TEntity entity);
+
+        Task<EntityEntry<TEntity>> AddAsync(TEntity entity, CancellationToken cancellationToken);
 
         void AddRange(List<TEntity> entities);
+
+        Task AddRangeAsync(List<TEntity> entities, CancellationToken cancellationToken);
 
         void Remove(TEntity entity);
 
@@ -28,5 +38,7 @@ namespace Sisc.Api.Data.Common
         void UpdateRange(List<TEntity> entities);
 
         int Complete();
+
+        Task<int> CompleteAsync(CancellationToken cancellationToken);
     }
 }

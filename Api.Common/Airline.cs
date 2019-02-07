@@ -1,10 +1,15 @@
-﻿namespace Sisc.Api.Common
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Sisc.Api.Common.Base;
+
+namespace Sisc.Api.Common
 {
-    public class Airline
+    public class Airline:DataEntity
     {
-        public int Id { get; set; }
+        [Key]
+        public int? Id { get; set; }
         public string Name { get; set; }
-        public string IATACode { get; set; }
-        public string ICAOCode { get; set; }
+        public string IataCode { get; set; }
+        public string IcaoCode { get; set; }
     }
 }

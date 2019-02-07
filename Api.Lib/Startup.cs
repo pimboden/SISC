@@ -1,7 +1,8 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Sisc.Api.Data.Common;
+using Sisc.Api.Lib.Managers;
 
 namespace Sisc.Api.Lib
 {
@@ -9,8 +10,10 @@ namespace Sisc.Api.Lib
     {
         public void ConfigureServices(IServiceCollection services, List<string> connectionStrings)
         {
-            var dataStart = new Sisc.Api.Data.Startup();
+            var dataStart = new Data.StartUp();
             dataStart.ConfigureServices(services, connectionStrings);
+            services.AddTransient<IAirlinesManager, AirlinesManager>();
+            services.AddTransient<ISimpleContext, SimpleContext>();
         }
     }
 }

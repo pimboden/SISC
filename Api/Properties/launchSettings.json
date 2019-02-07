@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iis": {
-      "applicationUrl": "https://siscrest.development",
+      "applicationUrl": "http://siscrest.development",
       "sslPort": 0
     },
     "iisExpress": {
@@ -34,7 +34,7 @@
       "commandName": "IIS",
       "workingDirectory": "C:\\_POCS\\Sunrisecargo\\SISC\\RestApi",
       "launchBrowser": true,
-      "launchUrl": "/docs"
+      "launchUrl": "docs"
     }
   }
 }

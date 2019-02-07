@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
+﻿using System.Collections.Generic;
 using Sisc.RestApi.Models;
 
 namespace Sisc.RestApi.Services
