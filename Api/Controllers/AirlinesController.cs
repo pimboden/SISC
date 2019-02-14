@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sisc.Api.Common;
+using Sisc.Api.Common.Helpers;
 using Sisc.Api.Lib.Managers;
 
 namespace Sisc.Api.Controllers
@@ -29,24 +30,43 @@ namespace Sisc.Api.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        ///     GET api/v1/airlines/GetAllAsync
-        ///or
-        /// 
-        ///     GET api/v1/airlines/GetAllAsync?page=1&amp;pageSize=1000
-        ///
+        ///     POST api/v1/airlines/GetAllAsync
+        ///     {
+        ///        "pageIndex":0,
+        ///        "pageSize":100,
+        ///        "orderByColumns":[
+        ///             {
+        ///                 "columnName":"name",
+        ///                 "descending":true
+        ///             },
+        ///             {
+        ///                 "columnName":"iataCode",
+        ///                 "descending":false
+        ///             }
+        ///         ]
+        ///     } 
         /// </remarks>
-        /// <param name="page">Current paging index</param>
-        /// <param name="pageSize">Amount of items to get from the given page</param>
+        /// <param name="queryParams">BaseQueryParams with paging info and Columns sorting info</param>
         /// <returns>List of found airlines</returns>
-        /// <response code="200">Returns List of found airlines</response>
-        [HttpGet]
+        /// <response code="200">Returns List of found airlines
+        ///         [
+        ///             {
+        ///                 "id": 1,
+        ///                 "name": "American Airlines",
+        ///                 "iataCode": "AA",
+        ///                 "icaoCode": "AAL"
+        ///             }
+        ///         ]
+        /// </response>
+    [HttpPost]
+    [Produces("application/json")]
         [ProducesResponseType(200)]
         [Route("GetAllAsync")]
-        public async Task<ActionResult<List<Airline>>> GetAllAsync([FromQuery]int page = 0, [FromQuery]int pageSize = 1000)
+        public async Task<ActionResult<List<Airline>>> GetAllAsync([FromBody] BaseQueryParams queryParams)
         {
             try
             {
-                return await _airlinesManager.GetAllAsync(page, pageSize, _cancellationToken);
+                return await _airlinesManager.GetAllAsync(queryParams, _cancellationToken);
             }
             catch (Exception exception)
             {
@@ -71,6 +91,7 @@ namespace Sisc.Api.Controllers
         /// <response code="404">Not Found</response>
         [HttpGet]
         [Route("GetAsync/{id}")]
+        [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(4040)]
         [ProducesResponseType(404)]
@@ -101,6 +122,7 @@ namespace Sisc.Api.Controllers
         /// <response code="404">Not Found</response>
         [HttpGet]
         [Route("GetByIataCode/{iataCode}")]
+        [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<Airline>> GetByIataCodeAsync(string iataCode)
@@ -133,6 +155,7 @@ namespace Sisc.Api.Controllers
         /// <response code="400">Bad Request</response>
         [HttpPost]
         [Route("AddAsync")]
+        [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<Airline>> AddAsync([FromBody] Airline newAirline)
@@ -172,6 +195,7 @@ namespace Sisc.Api.Controllers
         /// <response code="404">Not Found</response>
         [HttpPut]
         [Route("PutUpdateAsync")]
+        [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<Airline>> PutUpdateAsync([FromBody] Airline updateAirline)
@@ -204,6 +228,7 @@ namespace Sisc.Api.Controllers
         /// <response code="404">Not Found</response>
         [HttpPatch]
         [Route("PatchUpdateAsync")]
+        [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<Airline>> PatchUpdateAsync([FromBody] Airline updateAirline)
@@ -257,6 +282,7 @@ namespace Sisc.Api.Controllers
         /// <response code="404">Not Found</response>
         [HttpDelete]
         [Route("DeleteAsync")]
+        [Produces("application/json")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task<ActionResult> DeleteAsync(int id)

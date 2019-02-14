@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Sisc.Api.Common.Helpers;
 
 namespace Sisc.Api.Data.Common
 {
@@ -13,9 +14,9 @@ namespace Sisc.Api.Data.Common
 
         Task<TEntity> GetAsync(object[] keys, CancellationToken cancellationToken);
 
-        List<TEntity> GetAll(int pageIndex, int pageSize);
+        List<TEntity> GetAll(BaseQueryParams queryParams);
 
-        Task<List<TEntity>> GetAllAsync(int pageIndex, int pageSize, CancellationToken cancellationToken);
+        Task<List<TEntity>> GetAllAsync(BaseQueryParams queryParams, CancellationToken cancellationToken);
 
         List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize);
 

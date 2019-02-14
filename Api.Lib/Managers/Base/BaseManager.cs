@@ -19,7 +19,7 @@ namespace Sisc.Api.Lib.Managers.Base
 
         private readonly IEnumerable<PropertyInfo> _keyProps;
 
-        protected BaseManager(IRepository<TEntity> repository)
+        protected  BaseManager(IRepository<TEntity> repository)
         {
             _repository = repository;
             CacheInfo = new CacheInfo();
@@ -69,36 +69,30 @@ namespace Sisc.Api.Lib.Managers.Base
             return tEntity;
         }
 
-        public List<TEntity> GetAll(int pageIndex, int pageSize)
+        public List<TEntity> GetAll(BaseQueryParams queryParams)
         {
             if (!CacheInfo.HasCache)
             {
-                return _repository.GetAll(pageIndex, pageSize);
+                return _repository.GetAll(queryParams);
             }
 
-            var allFound = _repository.GetAll(pageIndex, pageSize);
+            var allFound = _repository.GetAll(queryParams);
 
-            foreach (var found in allFound)
-            {
-                TryAddToCache(found, GetCacheKey(found));
-            }
+           TryAddToCache(allFound, GetCacheKey(queryParams.OrderByColumns, queryParams.PageIndex, queryParams.PageSize));
 
             return allFound;
         }
 
-        public async Task<List<TEntity>> GetAllAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
+        public async Task<List<TEntity>> GetAllAsync(BaseQueryParams queryParams, CancellationToken cancellationToken)
         {
             if (!CacheInfo.HasCache)
             {
-                return await _repository.GetAllAsync(pageIndex, pageSize, cancellationToken);
+                return await _repository.GetAllAsync(queryParams, cancellationToken);
             }
 
-            var allFound = await _repository.GetAllAsync(pageIndex, pageSize, cancellationToken);
+            var allFound = await _repository.GetAllAsync(queryParams, cancellationToken);
 
-            foreach (var found in allFound)
-            {
-                TryAddToCache(found, GetCacheKey(found));
-            }
+            TryAddToCache(allFound, GetCacheKey(queryParams.OrderByColumns, queryParams.PageIndex, queryParams.PageSize));
 
             return allFound;
         }
@@ -310,16 +304,26 @@ namespace Sisc.Api.Lib.Managers.Base
             return result;
         }
 
+        protected string GetCacheKey(List<OrderByColumn>orderByColumns, int pageIndex, int pageSize)
+        {
+            var cacheKey = typeof(TEntity).ToString();
+            string result = cacheKey;
+            result = $"{result}_{pageIndex* pageSize}_{pageIndex * pageSize + pageSize - 1}";
+            if (orderByColumns != null)
+            {
+                foreach (var orderByColumn in orderByColumns)
+                {
+                    result = $"{result}_{orderByColumn.ColumnName}_{orderByColumn.Descending}";
+                }
+            }
+            return result;
+        }
+
         protected TEntity TryGetFromCache(string itemCacheKey)
         {
             try
             {
-                if (CacheInfo.ObjectCache.Exists<TEntity>(itemCacheKey))
-                {
-                    return CacheInfo.ObjectCache.Get<TEntity>(itemCacheKey);
-                }
-
-                return default(TEntity);
+                 return CacheInfo.ObjectCache.Get<TEntity>(itemCacheKey);
             }
             catch
             {
@@ -349,6 +353,29 @@ namespace Sisc.Api.Lib.Managers.Base
                 // ignored
             }
         }
+        protected void TryAddToCache(List<TEntity> tEntities, string itemCacheKey)
+        {
+            try
+            {
+                lock (CacheInfo.CacheLock)
+                {
+                    CacheInfo.ObjectCache.Clear(itemCacheKey);
+                    if (CacheInfo.Type == CacheInfo.CacheType.Absolute)
+                    {
+                        CacheInfo.ObjectCache.AddAbsolute(tEntities, itemCacheKey, CacheInfo.Timeout);
+                    }
+                    else
+                    {
+                        CacheInfo.ObjectCache.AddSliding(tEntities, itemCacheKey, CacheInfo.Timeout);
+                    }
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
 
         protected void TryRemoveCache(string itemCacheKey)
         {

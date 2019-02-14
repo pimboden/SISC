@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Sisc.Api.Common.Helpers;
 
 namespace Sisc.Api.Data.Common
 {
@@ -29,14 +30,15 @@ namespace Sisc.Api.Data.Common
             return await _context.Set<TEntity>().FindAsync(keys,cancellationToken);
         }
 
-        public List<TEntity> GetAll(int pageIndex, int pageSize)
+        public List<TEntity> GetAll(BaseQueryParams queryParams)
         {
-            return _context.Set<TEntity>().Skip(pageIndex * pageSize).Take(pageSize).ToList();
+
+          return _context.Set<TEntity>().OrderByColumns(queryParams.OrderByColumns).Skip(queryParams.PageIndex * queryParams.PageSize).Take(queryParams.PageSize).ToList();
         }
 
-        public async Task<List<TEntity>> GetAllAsync( int pageIndex, int pageSize, CancellationToken cancellationToken)
+        public async Task<List<TEntity>> GetAllAsync(BaseQueryParams queryParams, CancellationToken cancellationToken)
         {
-            return await _context.Set<TEntity>().Skip(pageIndex * pageSize).Take(pageSize).ToListAsync(cancellationToken);
+            return await _context.Set<TEntity>().OrderByColumns(queryParams.OrderByColumns).Skip(queryParams.PageIndex * queryParams.PageSize).Take(queryParams.PageSize).ToListAsync(cancellationToken);
         }
 
         public List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize)

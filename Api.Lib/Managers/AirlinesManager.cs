@@ -18,6 +18,7 @@ namespace Sisc.Api.Lib.Managers
 
         }
 
+      
         public async Task<Airline> GetByIataCodeAsync(string iataCode, CancellationToken cancellationToken)
         {
             var findTask= await _airlineRepository.FindAsync(x => x.IataCode.StartsWith(iataCode, StringComparison.InvariantCultureIgnoreCase),0,1, cancellationToken);

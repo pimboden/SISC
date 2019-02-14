@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Sisc.Api.Common.Helpers;
 
 namespace Sisc.Api.Lib.Managers
 {
@@ -10,8 +11,8 @@ namespace Sisc.Api.Lib.Managers
     {
         TEntity Get(object[] keys);
         Task<TEntity> GetAsync(object[] keys, CancellationToken cancellationToken);
-        List<TEntity> GetAll(int pageIndex, int pageSize);
-        Task<List<TEntity>> GetAllAsync(int pageIndex, int pageSize, CancellationToken cancellationToken);
+        List<TEntity> GetAll(BaseQueryParams queryParams);
+        Task<List<TEntity>> GetAllAsync(BaseQueryParams queryParams, CancellationToken cancellationToken);
         List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize);
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize, CancellationToken cancellationToken);
         int SaveNew(TEntity entity);
