@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Api.Common\Sisc.Api.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Interfaces\" />
+  </ItemGroup>
+
 </Project>

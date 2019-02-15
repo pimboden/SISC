@@ -10,11 +10,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Sisc.Api.Common.Runtime.Caching;
 using Sisc.RestApi.Services;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Logging;
 
 namespace Sisc.RestApi
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -66,30 +68,39 @@ namespace Sisc.RestApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
+            try
             {
-                app.UseDeveloperExceptionPage();
+                loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+                loggerFactory.AddDebug();
+                loggerFactory.AddLog4Net(Configuration.GetValue<string>("Log4NetConfigFile:Name"));
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+                else
+                {
+                    app.UseHsts();
+                }
+
+                app.UseHttpsRedirection();
+                // Enable middleware to serve generated Swagger as a JSON endpoint.
+                app.UseSwagger();
+
+                // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+                // specifying the Swagger JSON endpoint.
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SISC API V1");
+                    c.RoutePrefix = "docs";
+                });
+                app.UseMvc();
             }
-            else
+            catch (Exception exception)
             {
-                app.UseHsts();
+                System.Diagnostics.Debugger.Log(1, "some", exception.Message);
             }
-
-            app.UseHttpsRedirection();
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SISC API V1");
-                c.RoutePrefix = "docs";
-            });
-            app.UseMvc();
-
         }
     }
 }

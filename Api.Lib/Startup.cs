@@ -12,7 +12,7 @@ namespace Sisc.Api.Lib
         {
             var dataStart = new Data.StartUp();
             dataStart.ConfigureServices(services, connectionStrings);
-            services.AddTransient<IAirlinesManager, AirlinesManager>();
+            services.AddTransient<ICountriesManager, CountriesManager>();
             services.AddTransient<ISimpleContext, SimpleContext>();
         }
     }

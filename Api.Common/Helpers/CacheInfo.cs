@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Sisc.Api.Common.Runtime.Caching;
 
 namespace Sisc.Api.Common.Helpers
@@ -10,23 +12,29 @@ namespace Sisc.Api.Common.Helpers
             
         }
 
-        public CacheInfo(IObjectCache objectCache, object cacheLock, TimeSpan? timeout, CacheType cacheType = CacheType.Absolute)
-        {
-            ObjectCache = objectCache;
-            CacheLock = cacheLock;
-            Timeout = timeout ?? new TimeSpan(0,0,1,0);
-            Type = cacheType;
-        }
-
+     
         public enum CacheType
         {
             Absolute,
             Sliding
         }
+
         public IObjectCache ObjectCache { get; set; }
-        public object CacheLock { get; set; }
+        public ConcurrentDictionary<string, object> CacheLocks { get; set; }
         public TimeSpan Timeout { get; set; }
         public CacheType Type { get; set; }
-        public bool HasCache => ObjectCache != null;
+
+        public void AddToCache<T>(T objectToCache, string cacheKey) where T : class
+        {
+            switch (Type)
+            {
+                case CacheType.Sliding:
+                    ObjectCache.AddSliding(objectToCache, cacheKey, Timeout);
+                    break;
+                default:
+                    ObjectCache.AddAbsolute(objectToCache, cacheKey, Timeout);
+                    break;
+            }
+        }
     }
 }

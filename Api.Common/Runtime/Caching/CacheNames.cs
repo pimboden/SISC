@@ -2,6 +2,6 @@
 {
     public class CacheName
     {
-        public const string AirlineCache = "AirlineCache";
+        public const string CountriesCache = "CountriesCache";
     }
 }

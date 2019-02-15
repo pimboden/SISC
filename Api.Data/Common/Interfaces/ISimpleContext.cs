@@ -5,6 +5,6 @@ namespace Sisc.Api.Data.Common
 {
     public interface ISimpleContext : ISiscContext
     {
-        DbSet<Airline> Airlines { get; set; }
+        DbSet<Country> Countries { get; set; }
     }
 }
