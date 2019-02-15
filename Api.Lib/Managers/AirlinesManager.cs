@@ -9,12 +9,12 @@ using Sisc.Api.Lib.Managers.Base;
 
 namespace Sisc.Api.Lib.Managers
 {
-    public class AirlinesManager: BaseManager<Airline>, IAirlinesManager
+    public class CountriesManager : BaseManager<Country>, ICountriesManager
     {
-        private readonly IAirlineRepository _airlineRepository;
-        public AirlinesManager(IAirlineRepository airlineRepository, ICacheHandler cacheHandler) : base(airlineRepository, cacheHandler.GetCacheInfo(CacheName.AirlineCache))
+        private readonly ICountriesRepository _countriesRepository;
+        public CountriesManager(ICountriesRepository countriesRepository, ICacheHandler cacheHandler) : base(countriesRepository, cacheHandler.GetCacheInfo(CacheName.AirlineCache))
         {
-            _airlineRepository = airlineRepository;
+            _countriesRepository = countriesRepository;
 
         }
 

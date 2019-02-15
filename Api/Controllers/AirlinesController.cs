@@ -11,26 +11,26 @@ using Sisc.Api.Lib.Managers;
 namespace Sisc.Api.Controllers
 {
     [ApiVersion("1")]
-    public class AirlinesController : SiscBaseController
+    public class CountriesController : SiscBaseController
     {
-        private IAirlinesManager _airlinesManager;
+        private ICountriesManager _countriesManager;
         private readonly CancellationTokenSource _cancellationTokenSource;
         readonly CancellationToken _cancellationToken;
 
         
-        public AirlinesController(IAirlinesManager airlinesManager)
+        public CountriesController(ICountriesManager countriesManager)
         {
-            _airlinesManager = airlinesManager;
+            _countriesManager = countriesManager;
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
         }
         /// <summary>
-        /// Gets a Paged amount of airlines 
+        /// Gets a Paged amount of countries 
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST api/v1/airlines/GetAllAsync
+        ///     POST api/v1/countries/GetAllAsync
         ///     {
         ///        "pageIndex":0,
         ///        "pageSize":100,
@@ -40,21 +40,20 @@ namespace Sisc.Api.Controllers
         ///                 "descending":true
         ///             },
         ///             {
-        ///                 "columnName":"iataCode",
+        ///                 "columnName":"isoCode",
         ///                 "descending":false
         ///             }
         ///         ]
         ///     } 
         /// </remarks>
         /// <param name="queryParams">BaseQueryParams with paging info and Columns sorting info</param>
-        /// <returns>List of found airlines</returns>
-        /// <response code="200">Returns List of found airlines
+        /// <returns>List of found countries</returns>
+        /// <response code="200">Returns List of found countries
         ///         [
         ///             {
         ///                 "id": 1,
-        ///                 "name": "American Airlines",
-        ///                 "iataCode": "AA",
-        ///                 "icaoCode": "AAL"
+        ///                 "name": "Colombia",
+        ///                 "isoCode": "CO",
         ///             }
         ///         ]
         /// </response>
@@ -62,11 +61,11 @@ namespace Sisc.Api.Controllers
     [Produces("application/json")]
         [ProducesResponseType(200)]
         [Route("GetAllAsync")]
-        public async Task<ActionResult<List<Airline>>> GetAllAsync([FromBody] BaseQueryParams queryParams)
+        public async Task<ActionResult<List<Country>>> GetAllAsync([FromBody] BaseQueryParams queryParams)
         {
             try
             {
-                return await _airlinesManager.GetAllAsync(queryParams, _cancellationToken);
+                return await _countriesManager.GetAllAsync(queryParams, _cancellationToken);
             }
             catch (Exception exception)
             {
@@ -76,29 +75,27 @@ namespace Sisc.Api.Controllers
         }
 
         /// <summary>
-        /// Get a airline with the given ID
+        /// Get a country with the given ID
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     GET api/v1/airlines/Get/1
+        ///     GET api/v1/countries/Get/1
         ///
         /// </remarks>
-        /// <param name="id">Id of the airline to fetch</param>
-        /// <returns>The airline</returns>
-        /// <response code="200">The airline</response>
-        /// /// <response code="404">Bad Request</response>
+        /// <param name="id">Id of the country to fetch</param>
+        /// <returns>The country</returns>
+        /// <response code="200">The country</response>
         /// <response code="404">Not Found</response>
         [HttpGet]
         [Route("GetAsync/{id}")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(4040)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Airline>> GetAsync(int id)
+        public async Task<ActionResult<Country>> GetAsync(int id)
         {
           
-            var found = await _airlinesManager.GetAsync(new object[] { id }, _cancellationToken);
+            var found = await _countriesManager.GetAsync(new object[] { id }, _cancellationToken);
             if (found != null)
             {
                 return Ok(found);
@@ -108,26 +105,26 @@ namespace Sisc.Api.Controllers
             
         }
         /// <summary>
-        /// Get a airline with the given IATA code
+        /// Get a country with the given ISO code
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     GET api/v1/airlines/GetByIataCodeAsync/col
+        ///     GET api/v1/countries/GetByIataCodeAsync/col
         ///
         /// </remarks>
-        /// <param name="iataCode">IATA code of the airline to fetch</param>
-        /// <returns>The airline</returns>
-        /// <response code="200">The airline</response>
+        /// <param name="isoCode">ISO code of the country to fetch</param>
+        /// <returns>The country</returns>
+        /// <response code="200">The country</response>
         /// <response code="404">Not Found</response>
         [HttpGet]
-        [Route("GetByIataCode/{iataCode}")]
+        [Route("GetByIsoCodeAsync/{isoCode}")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Airline>> GetByIataCodeAsync(string iataCode)
+        public async Task<ActionResult<Country>> GetByIsoCodeAsync(string isoCode)
         {
-            var found = await _airlinesManager.GetByIataCodeAsync(iataCode, _cancellationToken);
+            var found = await _countriesManager.GetByIsoCodeAsync(isoCode, _cancellationToken);
             if (found != null)
             {
                 return Ok(found);
@@ -136,36 +133,35 @@ namespace Sisc.Api.Controllers
             return NotFound();
         }
         /// <summary>
-        /// Adds an Airline to the Airlines collection 
+        /// Adds an Country to the countries collection 
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST api/Airline/AddAsync
+        ///     POST api/v1/countries/AddAsync
         ///     {
-        ///        "name":"American Airlines",
-        ///        "iataCode":"AA",
-        ///        "icaoCode":"AAL"
+        ///        "name":"Suiza",
+        ///        "isoCode":"CH",
         ///     } 
         ///    
         /// </remarks>
-        /// <param name="newAirline">the Airline to insert</param>
-        /// <returns>Return the inserted Airline</returns>
-        /// <response code="200">Return the inserted Airline</response>
+        /// <param name="newCountry">the Country to insert</param>
+        /// <returns>Return the inserted Country</returns>
+        /// <response code="200">Return the inserted Country</response>
         /// <response code="400">Bad Request</response>
         [HttpPost]
         [Route("AddAsync")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<Airline>> AddAsync([FromBody] Airline newAirline)
+        public async Task<ActionResult<Country>> AddAsync([FromBody] Country newCountry)
         {
             try
             {
                 //TODO: Find out outnumber on postgres
-                await _airlinesManager.SaveNewAsync(newAirline, _cancellationToken);
+                await _countriesManager.SaveNewAsync(newCountry, _cancellationToken);
 
-                return Ok(newAirline);
+                return Ok(newCountry);
             }
             catch (Exception exception)
             {
@@ -175,108 +171,101 @@ namespace Sisc.Api.Controllers
         }
 
         /// <summary>
-        /// Updates an Airline to the Airlines collection. Updates all fields 
+        /// Updates a country to the countries collection. Updates all fields 
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     PUT api/Airline/UpdateAsync
+        ///     PUT api/v1/countries/UpdateAsync
         ///     {
         ///        "id":1,
-        ///        "name":"American Airlines",
-        ///        "iataCode":"AA",
-        ///        "icaoCode":"AAL",
+        ///        "name":"Colombia",
+        ///        "isoCode":"CO"
         ///     } 
         ///    
         /// </remarks>
-        /// <param name="updateAirline">The Airline to update</param>
-        /// <returns>Return the updateAirline</returns>
-        /// <response code="200">Return the updateAirline</response>
+        /// <param name="updateCountry">The Country to update</param>
+        /// <returns>Return the updated Country</returns>
+        /// <response code="200">Return the updated Country</response>
         /// <response code="404">Not Found</response>
         [HttpPut]
         [Route("PutUpdateAsync")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Airline>> PutUpdateAsync([FromBody] Airline updateAirline)
+        public async Task<ActionResult<Country>> PutUpdateAsync([FromBody] Country updateCountry)
         {
-            var returnValue = await UpdateAirline(updateAirline, HttpMethods.Put);
+            var returnValue = await UpdateCountry(updateCountry, HttpMethods.Put);
             if (returnValue > 0)
             {
-                return Ok(updateAirline);
+                return Ok(updateCountry);
             }
             return NotFound();
         }
         /// <summary>
-        /// Updates an Airline to the Airlines collection. Updates only fields not null 
+        /// Updates an Country to the countries collection. Updates only fields not null 
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     PATCH api/Airline/UpdateAsync
+        ///     PATCH api/v1/countries/UpdateAsync
         ///     {
         ///        "id":1,
-        ///        "name":"American Airlines",
-        ///        "iataCode":"AA",
-        ///        "icaoCode":"AAL",
+        ///        "name":"Colombia"
         ///     } 
         ///    
         /// </remarks>
-        /// <param name="updateAirline">The Airline to update</param>
-        /// <returns>Return the updateAirline</returns>
-        /// <response code="200">Return the updateAirline</response>
+        /// <param name="updateCountry">The Country to update</param>
+        /// <returns>Return the updated Country</returns>
+        /// <response code="200">Return the updated Country</response>
         /// <response code="404">Not Found</response>
         [HttpPatch]
         [Route("PatchUpdateAsync")]
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Airline>> PatchUpdateAsync([FromBody] Airline updateAirline)
+        public async Task<ActionResult<Country>> PatchUpdateAsync([FromBody] Country updateCountry)
         {
-            var returnValue = await UpdateAirline(updateAirline, HttpMethods.Put);
+            var returnValue = await UpdateCountry(updateCountry, HttpMethods.Put);
             if (returnValue > 0)
             {
-                return Ok(updateAirline);
+                return Ok(updateCountry);
             }
             return NotFound();
         }
 
-        private async Task<int> UpdateAirline(Airline updateAirline, string method)
+        private async Task<int> UpdateCountry(Country updateCountry, string method)
         {
-            Airline airline = null;
+            Country country = null;
             if (method == HttpMethods.Put)
             {
-                airline = updateAirline;
+                country = updateCountry;
             }
             else if (method == HttpMethods.Patch)
             {
-                airline = new Airline {Id = updateAirline.Id};
-                if (string.IsNullOrEmpty(updateAirline.IataCode))
+                country = new Country {Id = updateCountry.Id};
+                if (string.IsNullOrEmpty(updateCountry.IsoCode))
                 {
-                    airline.IataCode = updateAirline.IataCode;
+                    country.IsoCode = updateCountry.IsoCode;
                 }
-                if (string.IsNullOrEmpty(updateAirline.IcaoCode))
+                if (string.IsNullOrEmpty(updateCountry.Name))
                 {
-                    airline.IcaoCode = updateAirline.IcaoCode;
-                }
-                if (string.IsNullOrEmpty(updateAirline.Name))
-                {
-                    airline.Name = updateAirline.Name;
+                    country.Name = updateCountry.Name;
                 }
             }
-            return await _airlinesManager.UpdateAsync(airline, _cancellationToken);
+            return await _countriesManager.UpdateAsync(country, _cancellationToken);
 
         }
         /// <summary>
-        /// Delete an Airline from the Airlines collection.
+        /// Delete a country from the countries collection.
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     Delete api/Airline/DeleteAsync/1
+        ///     Delete api/v1/countries/DeleteAsync/1
         ///    
         /// </remarks>
-        /// <param name="id">The id of the Airline to delete</param>
+        /// <param name="id">The id of the Country to delete</param>
         /// <returns>Status Code</returns>
         /// <response code="204">No Content</response>
         /// <response code="404">Not Found</response>
@@ -287,7 +276,7 @@ namespace Sisc.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var returnValue = await _airlinesManager.RemoveAsync(new Airline { Id = id }, _cancellationToken);
+            var returnValue = await _countriesManager.RemoveAsync(new Country { Id = id }, _cancellationToken);
 
             if (returnValue > 0)
             {

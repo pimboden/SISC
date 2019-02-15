@@ -4,12 +4,10 @@ using Sisc.Api.Common.Base;
 
 namespace Sisc.Api.Common
 {
-    public class Airline:DataEntity
+    public class Country:DataEntity
     {
-        [Key]
         public int? Id { get; set; }
         public string Name { get; set; }
-        public string IataCode { get; set; }
-        public string IcaoCode { get; set; }
+        public string IsoCode { get; set; }
     }
 }
