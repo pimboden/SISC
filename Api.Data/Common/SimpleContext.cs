@@ -10,18 +10,16 @@ namespace Sisc.Api.Data.Common
         {
         }
 
-        public DbSet<Airline> Airlines { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Airline>().ToTable("Airline").HasKey(c => new {c.Id});
-            builder.Entity<Airline>().Property(c => c.Id).HasColumnName("Id");
-            builder.Entity<Airline>().Property(c => c.Name).HasColumnName("Name");
-            builder.Entity<Airline>().Property(c => c.IataCode).HasColumnName("IATACode");
-            builder.Entity<Airline>().Property(c => c.IcaoCode).HasColumnName("ICAOCode");
-
+            builder.Entity<Country>().ToTable("Country").HasKey(c => new {c.Id});
+            builder.Entity<Country>().Property(c => c.Id).HasColumnName("Id");
+            builder.Entity<Country>().Property(c => c.Name).HasColumnName("Name").HasMaxLength(256);
+            builder.Entity<Country>().Property(c => c.IsoCode).HasColumnName("IsoCode").HasMaxLength(2);
 
 
         }

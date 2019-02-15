@@ -16,7 +16,7 @@ namespace Sisc.Api.Data
                     sqlConnectionStrings[0]
                 )
             );
-            services.AddTransient<IAirlineRepository, AirlineRepository>();
+            services.AddTransient<ICountriesRepository, CountriesRepository>();
         }
     }
 }

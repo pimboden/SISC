@@ -38,7 +38,9 @@ namespace Sisc.Api.Data.Common
 
         public async Task<List<TEntity>> GetAllAsync(BaseQueryParams queryParams, CancellationToken cancellationToken)
         {
-            return await _context.Set<TEntity>().OrderByColumns(queryParams.OrderByColumns).Skip(queryParams.PageIndex * queryParams.PageSize).Take(queryParams.PageSize).ToListAsync(cancellationToken);
+            return await _context.Set<TEntity>().OrderByColumns(queryParams.OrderByColumns)
+                .Skip(queryParams.PageIndex * queryParams.PageSize)
+                .Take(queryParams.PageSize).ToListAsync(cancellationToken);
         }
 
         public List<TEntity> Find(Expression<Func<TEntity, bool>> predicate, int pageIndex, int pageSize)

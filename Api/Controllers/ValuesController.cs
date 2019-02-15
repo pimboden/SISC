@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Sisc.RestApi.Models;
 using Sisc.RestApi.Services;
 
@@ -10,7 +11,7 @@ namespace Sisc.Api.Controllers
     {
         
         private readonly List<Value> AllValues;
-        public ValuesController(IMockCreator  mockCreator)
+        public ValuesController(IMockCreator mockCreator)
         {
             AllValues = mockCreator.AllValues;
 
